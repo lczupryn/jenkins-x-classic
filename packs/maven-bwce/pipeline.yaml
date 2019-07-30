@@ -9,7 +9,7 @@ pipelines:
       steps:
       - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
         name: set-version
-      - sh: cd $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n');mvn package
+      - sh: mvn package -f $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')/
         name: mvn-package
   release:
     setVersion:
@@ -23,5 +23,5 @@ pipelines:
         name: tag-version
     build:
       steps:
-      - sh: cd $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n');mvn clean package
+      - sh: mvn clean package $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')/
         name: mvn-package
