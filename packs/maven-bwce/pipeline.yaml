@@ -11,6 +11,8 @@ pipelines:
         name: set-version
       - sh: mvn -f \$(ls |grep *.parent)/  package
         name: mvn-package
+      - sh: mv \$(find . -name '*.ear') .
+        name: Move ear file
   release:
     setVersion:
       steps:
@@ -25,3 +27,5 @@ pipelines:
       steps:
       - sh: mvn -f \$(ls |grep *.parent)/  clean package
         name: mvn-package
+      - sh: mv \$(find . -name '*.ear') .
+        name: Move ear file
