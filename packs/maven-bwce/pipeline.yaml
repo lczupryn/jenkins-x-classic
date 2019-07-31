@@ -7,12 +7,11 @@ pipelines:
   pullRequest:
     build:
       steps:
-      - sh: cd $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')
-        name: find bwce parent project
       - sh: mvn versions:set -DnewVersion=$PREVIEW_VERSION
         name: set-version
       - sh: mvn package
         name: mvn-package
+        dir: $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')
   release:
     setVersion:
       steps:
@@ -25,7 +24,6 @@ pipelines:
         name: tag-version
     build:
       steps:
-      - sh: cd $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')
-        name: find bwce parent project
       - sh: mvn clean package
         name: mvn-package
+        dir: $(find . -maxdepth 1 -type d -name '*.parent' -printf '%f\n')
