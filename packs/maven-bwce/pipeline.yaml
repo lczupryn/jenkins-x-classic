@@ -1,7 +1,7 @@
 extends:
   file: ../pipeline.yaml
 agent:
-  label: jenkins-maven-bwce
+  label: jenkins-maven
   container: maven
 pipelines:
   pullRequest:
