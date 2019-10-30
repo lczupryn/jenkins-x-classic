@@ -7,11 +7,11 @@ pipelines:
   pullRequest:
     build:
       steps:
-      - sh: mvn -f \$(ls |grep .app)/  versions:set -DnewVersion=$PREVIEW_VERSION
-        name: set-version
-      - sh: mvn -f \$(ls |grep .app)/  install -DskipTests
+      - sh: (cd \$(ls |grep .app)/ ;mvn install deploy -DskipTests)
         name: mvn install dependecies
-      - sh: mvn -f \$(ls |grep docker)/  install -DskipTests
+      - sh: (cd \$(ls |grep docker)/ ;mvn versions:set -DnewVersion=$PREVIEW_VERSION)
+        name: set-version
+      - sh: (cd \$(ls |grep docker)/ ;mvn install -DskipTests)
         name: install docker image
   release:
     setVersion:
@@ -19,15 +19,13 @@ pipelines:
       - sh: echo \$(jx-release-version) > VERSION
         name: next-version
         comment: so we can retrieve the version in later steps
-      - sh: mvn -f \$(ls |grep .app)/  versions:set -DnewVersion=\$(cat VERSION)
-        name: set-version application
-      - sh: mvn -f \$(ls |grep docker)/  versions:set -DnewVersion=\$(cat VERSION)
+      - sh: (cd \$(ls |grep docker)/ ;mvn versions:set -DnewVersion=\$(cat ../VERSION))
         name: set-version docker
       - sh: jx step tag --version \$(cat VERSION)
         name: tag-version
     build:
       steps:
-      - sh: mvn -f \$(ls |grep .app)/  install -DskipTests
+      - sh: (cd \$(ls |grep .app)/ ;mvn install deploy -DskipTests)
         name: mvn install dependecies
-      - sh: mvn -f \$(ls |grep docker)/  install -DskipTests
+      - sh: (cd \$(ls |grep docker)/ ;mvn install -DskipTests)
         name: install docker image
